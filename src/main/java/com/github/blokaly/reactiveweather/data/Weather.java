@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Weather {
-    private String condition;
+    private double temperature;
+    private double windSpeed;
 }

@@ -13,10 +13,10 @@ application:
     table: "city-weather-info"
 
   weather-stack:
-    api: http://api.weatherstack.com/current?access_key=${weather-stack-access-key}
+    api: http://api.weatherstack.com/
 
   open-weather-map:
-    api: http://api.openweathermap.org/data/2.5/weather?appid=${open-weather-map-access-key}&units=metric
+    api: http://api.openweathermap.org/data/2.5/
 
 weather-stack-access-key: xxx
 open-weather-map-access-key: xxx

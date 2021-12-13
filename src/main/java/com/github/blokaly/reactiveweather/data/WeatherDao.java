@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WeatherDao {
     private String city;
-    private String condition;
+    private double temperature;
+    private double windSpeed;
 }
