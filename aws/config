@@ -1,0 +1,4 @@
+[default]
+region = ap-east-1
+output = json
+
