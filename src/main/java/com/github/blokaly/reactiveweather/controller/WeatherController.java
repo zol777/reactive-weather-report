@@ -4,6 +4,7 @@ import com.github.blokaly.reactiveweather.data.Weather;
 import com.github.blokaly.reactiveweather.service.WeatherRepoService;
 import com.github.blokaly.reactiveweather.service.WebclientService;
 import java.time.Duration;
+import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,16 +31,14 @@ public class WeatherController {
   @GetMapping("/weather/{city}")
   public Mono<Weather> lookupWeather(@PathVariable String city) {
     return validateCity(city)
-        .transform(it -> it.flatMap(s -> weatherOps.opsForValue().get(s)))
+        .flatMap(it -> weatherOps.opsForValue().get(it))
         .doOnNext(it -> log.info("Value from cache: {}", it))
         .switchIfEmpty(
             webclientService.lookupWeather(city)
-                .zipWhen(
-                    weather -> weatherOps.opsForValue().set(city, weather, Duration.ofSeconds(5)))
-                .doOnNext(it -> log.info("" +
-                    "Saved to cache: {}", it.getT2()))
+                .zipWhen(it -> weatherOps.opsForValue().set(city, it, Duration.ofSeconds(5)))
+                .doOnNext(it -> log.info("Saved to cache: {}", it.getT2()))
                 .map(Tuple2::getT1)
-                .zipWhen(weather -> weatherRepoService.saveWeather(city, weather))
+                .zipWhen(it -> weatherRepoService.saveWeather(city, it))
                 .map(Tuple2::getT1))
         .switchIfEmpty(weatherRepoService.retrieveWeather(city));
   }

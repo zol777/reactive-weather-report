@@ -2,6 +2,8 @@ package com.github.blokaly.reactiveweather.service;
 
 import com.github.blokaly.reactiveweather.data.Weather;
 import java.util.Map;
+import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,35 +16,41 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 
 @Repository
+@Slf4j
 public class WeatherRepoService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherRepoService.class);
-    private final DynamoDbAsyncClient dynamoDbAsyncClient;
-    private final String weatherTable;
+  private static final Logger LOGGER = LoggerFactory.getLogger(WeatherRepoService.class);
+  private final DynamoDbAsyncClient dynamoDbAsyncClient;
+  private final String weatherTable;
 
-    public WeatherRepoService(DynamoDbAsyncClient dynamoDbAsyncClient,
-                              @Value("${application.dynamo.table}") String weatherTable) {
-        this.dynamoDbAsyncClient = dynamoDbAsyncClient;
-        this.weatherTable = weatherTable;
-    }
+  public WeatherRepoService(DynamoDbAsyncClient dynamoDbAsyncClient,
+                            @Value("${application.dynamo.table}") String weatherTable) {
+    this.dynamoDbAsyncClient = dynamoDbAsyncClient;
+    this.weatherTable = weatherTable;
+  }
 
-    public Mono<Weather> retrieveWeather(String city) {
-        GetItemRequest itemReq = GetItemRequest.builder().key(Map.of("city", AttributeValue.builder().s(city).build()))
-                .tableName(weatherTable)
-                .build();
-        return Mono.fromFuture(dynamoDbAsyncClient.getItem(itemReq))
-                .map(res -> new Weather(Double.parseDouble(res.item().get("temperature").s()), Double.parseDouble(res.item().get("windSpeed").s())))
-                .doOnError(ex -> LOGGER.error("item retrieval error", ex));
-    }
+  public Mono<Weather> retrieveWeather(String city) {
+    GetItemRequest itemReq =
+        GetItemRequest.builder().key(Map.of("city", AttributeValue.builder().s(city).build()))
+            .tableName(weatherTable)
+            .build();
+    return Mono.fromFuture(dynamoDbAsyncClient.getItem(itemReq))
+        .map(res -> new Weather(Double.parseDouble(res.item().get("temperature").s()),
+            Double.parseDouble(res.item().get("windSpeed").s())))
+        .doOnSuccess(it -> log.info("Value from repo"))
+        .doOnError(ex -> LOGGER.error("item retrieval error", ex));
+  }
 
-    public Mono<PutItemResponse> saveWeather(String city, Weather weather) {
-        PutItemRequest putReq = PutItemRequest.builder().item(
-                        Map.of("city", AttributeValue.builder().s(city).build(),
-                                "temperature", AttributeValue.builder().s(String.valueOf(weather.getTemperature())).build(),
-                                "windSpeed", AttributeValue.builder().s(String.valueOf(weather.getWindSpeed())).build()
-                        ))
-                .tableName(weatherTable)
-                .build();
-        return Mono.fromFuture(dynamoDbAsyncClient.putItem(putReq))
-                .doOnError(ex -> LOGGER.error("item put error",ex));
-    }
+  public Mono<PutItemResponse> saveWeather(String city, Weather weather) {
+    PutItemRequest putReq = PutItemRequest.builder().item(
+            Map.of("city", AttributeValue.builder().s(city).build(),
+                "temperature",
+                AttributeValue.builder().s(String.valueOf(weather.getTemperature())).build(),
+                "windSpeed", AttributeValue.builder().s(String.valueOf(weather.getWindSpeed())).build()
+            ))
+        .tableName(weatherTable)
+        .build();
+    return Mono.fromFuture(dynamoDbAsyncClient.putItem(putReq))
+        .doOnSuccess(it -> log.info("Saved to repo"))
+        .doOnError(ex -> LOGGER.error("item put error", ex));
+  }
 }
