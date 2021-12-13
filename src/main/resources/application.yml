@@ -7,6 +7,9 @@ spring:
     timeout: 5000
 
 application:
+  cache:
+    time-to-live: 3
+
   dynamo:
     region: "ap-east-1"
     endpoint: "http://localhost:8042"

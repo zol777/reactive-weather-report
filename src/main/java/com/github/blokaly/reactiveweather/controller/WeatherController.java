@@ -6,6 +6,7 @@ import com.github.blokaly.reactiveweather.service.WebclientService;
 import java.time.Duration;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,8 @@ public class WeatherController {
   private final ReactiveRedisOperations<String, Weather> weatherOps;
   private final WeatherRepoService weatherRepoService;
   private final WebclientService webclientService;
+  @Value("${application.cache.time-to-live}")
+  private int ttl;
 
   public WeatherController(ReactiveRedisOperations<String, Weather> weatherOps,
                            WeatherRepoService weatherRepoService,
@@ -35,7 +38,7 @@ public class WeatherController {
         .doOnNext(it -> log.info("Value from cache: {}", it))
         .switchIfEmpty(
             webclientService.lookupWeather(city)
-                .zipWhen(it -> weatherOps.opsForValue().set(city, it, Duration.ofSeconds(5)))
+                .zipWhen(it -> weatherOps.opsForValue().set(city, it, Duration.ofSeconds(ttl)))
                 .doOnNext(it -> log.info("Saved to cache: {}", it.getT2()))
                 .map(Tuple2::getT1)
                 .zipWhen(it -> weatherRepoService.saveWeather(city, it))
