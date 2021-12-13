@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: local
   redis:
     host: localhost
     port: 6379
@@ -9,3 +11,13 @@ application:
     region: "ap-east-1"
     endpoint: "http://localhost:8042"
     table: "city-weather-info"
+
+  weather-stack:
+    api: http://api.weatherstack.com/current?access_key=${weather-stack-access-key}
+
+  open-weather-map:
+    api: http://api.openweathermap.org/data/2.5/weather?appid=${open-weather-map-access-key}&units=metric
+
+weather-stack-access-key: xxx
+open-weather-map-access-key: xxx
+

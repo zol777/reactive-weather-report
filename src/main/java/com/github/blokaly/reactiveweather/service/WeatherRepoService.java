@@ -15,13 +15,13 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 import java.util.Map;
 
 @Repository
-public class WeatherRepo {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherRepo.class);
+public class WeatherRepoService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(WeatherRepoService.class);
     private final DynamoDbAsyncClient dynamoDbAsyncClient;
     private final String weatherTable;
 
-    public WeatherRepo(DynamoDbAsyncClient dynamoDbAsyncClient,
-                    @Value("${application.dynamo.table}") String weatherTable) {
+    public WeatherRepoService(DynamoDbAsyncClient dynamoDbAsyncClient,
+                              @Value("${application.dynamo.table}") String weatherTable) {
         this.dynamoDbAsyncClient = dynamoDbAsyncClient;
         this.weatherTable = weatherTable;
     }
