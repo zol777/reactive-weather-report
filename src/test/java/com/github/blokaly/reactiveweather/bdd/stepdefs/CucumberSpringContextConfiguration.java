@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -30,5 +31,8 @@ public class CucumberSpringContextConfiguration {
   @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
   @Autowired
   protected WireMockServer wireMockServer;
+
+  @Autowired
+  protected ReactiveRedisConnectionFactory redisFactory;
 
 }
