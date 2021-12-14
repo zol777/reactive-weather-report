@@ -46,7 +46,6 @@ public class QueryService {
   }
 
   private Mono<Weather> retrieveFromOpenWeather(String city) {
-//    return Mono.just(new Weather(10.0, 10.0));
     return openWeatherMapWebClient.get().uri(ub -> ub.path("/weather")
         .queryParam("appid", openWeatherKey)
         .queryParam("units", "metric")

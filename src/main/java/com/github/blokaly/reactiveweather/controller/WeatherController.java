@@ -39,8 +39,8 @@ public class WeatherController {
         .flatMap(cacheService::retrieveWeather)
         .switchIfEmpty(
             queryService.lookupWeather(city)
-                .transform(it -> cacheService.saveWeather(city, it))
-                .transform(it -> repoService.saveWeather(city, it))
+                .transform(report -> cacheService.saveWeather(city, report))
+                .transform(report -> repoService.saveWeather(city, report))
         )
         .switchIfEmpty(repoService.retrieveWeather(city));
   }
