@@ -16,7 +16,6 @@ services:
       - "8042:8000"
     command: -jar DynamoDBLocal.jar -sharedDb
 
-# TODO fix podman volume mount issue
 #  awscli:
 #    image: amazon/aws-cli
 #    container_name: aws-cli
