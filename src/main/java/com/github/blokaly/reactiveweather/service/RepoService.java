@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
@@ -51,5 +52,10 @@ public class RepoService {
     return Mono.fromFuture(dynamoDbAsyncClient.putItem(putReq))
         .doOnSuccess(it -> log.info("Saved to repo"))
         .doOnError(ex -> LOGGER.error("item put error", ex));
+  }
+
+  public Mono<Weather> saveWeather(String city, Mono<Weather> upstream) {
+    return upstream.zipWhen(it -> saveWeather(city, it))
+        .map(Tuple2::getT1);
   }
 }

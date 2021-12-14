@@ -40,8 +40,8 @@ public class WeatherController {
         .switchIfEmpty(
             queryService.lookupWeather(city)
                 .transform(it -> cacheService.saveWeather(city, it))
-                .zipWhen(it -> repoService.saveWeather(city, it))
-                .map(Tuple2::getT1))
+                .transform(it -> repoService.saveWeather(city, it))
+        )
         .switchIfEmpty(repoService.retrieveWeather(city));
   }
 
