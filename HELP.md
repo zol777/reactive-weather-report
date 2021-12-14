@@ -29,7 +29,14 @@ https://medium.com/@cheron.antoine/reactor-java-1-how-to-create-mono-and-flux-47
 
 ### How to run
 
-1. **With docker or docker desktop installed**
+1. First, create a new file named `application-local.yml` under the main's resources folder, with your own api keys:
+
+   ```
+   weather-stack-access-key: <your own key>
+   open-weather-map-access-key: <you own key>
+   ```
+
+2. **If docker and docker-compose installed**
     
     Modify `docker-compose.yml` file to comment in the _awscli_ section, then
     
@@ -40,7 +47,7 @@ https://medium.com/@cheron.antoine/reactor-java-1-how-to-create-mono-and-flux-47
     and run this application from within IDE.
 
 
-2. **With podman and podman-compose installed**
+3. **Or with podman and podman-compose installed**
 
     ```shell
     $ podman-compose up -d
@@ -54,7 +61,7 @@ https://medium.com/@cheron.antoine/reactor-java-1-how-to-create-mono-and-flux-47
    and run this application from within IDE.
 
 
-3. To test the application, run
+4. To test the application, run
 
     ```shell
     $ curl http://localhost:8080/weather/New%20York
