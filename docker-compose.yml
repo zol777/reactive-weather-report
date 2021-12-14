@@ -17,11 +17,11 @@ services:
     command: -jar DynamoDBLocal.jar -sharedDb
 
 # TODO fix podman volume mount issue
-  awscli:
-    image: amazon/aws-cli
-    container_name: aws-cli
-    volumes:
-      - ./aws:/root/.aws
-    depends_on:
-      - dynamodb-local
-    command: dynamodb --endpoint-url http://dynamodb-local:8000 create-table --table-name city-weather-info --attribute-definitions AttributeName=city,AttributeType=S --key-schema AttributeName=city,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+#  awscli:
+#    image: amazon/aws-cli
+#    container_name: aws-cli
+#    volumes:
+#      - ./aws:/root/.aws
+#    depends_on:
+#      - dynamodb-local
+#    command: dynamodb --endpoint-url http://dynamodb-local:8000 create-table --table-name city-weather-info --attribute-definitions AttributeName=city,AttributeType=S --key-schema AttributeName=city,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5

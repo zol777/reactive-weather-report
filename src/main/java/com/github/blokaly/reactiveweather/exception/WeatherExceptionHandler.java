@@ -15,9 +15,9 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 
 @Component
 @Order(-2)
-public class GlobalErrorWebExceptionHandler extends DefaultErrorWebExceptionHandler {
+public class WeatherExceptionHandler extends DefaultErrorWebExceptionHandler {
 
-  public GlobalErrorWebExceptionHandler(
+  public WeatherExceptionHandler(
       ErrorAttributes errorAttributes,
       WebProperties webProperties,
       ApplicationContext applicationContext) {

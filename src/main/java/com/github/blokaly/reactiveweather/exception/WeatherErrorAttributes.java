@@ -7,14 +7,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
 @Component
-public class GlobalErrorAttributes extends DefaultErrorAttributes {
+public class WeatherErrorAttributes extends DefaultErrorAttributes {
 
   @Override
   public Map<String, Object> getErrorAttributes(ServerRequest request,
                                                 ErrorAttributeOptions options) {
     var attributes = super.getErrorAttributes(request, options);
-    if (getError(request) instanceof GlobalException) {
-      GlobalException ex = (GlobalException) getError(request);
+    if (getError(request) instanceof WeatherException) {
+      WeatherException ex = (WeatherException) getError(request);
       attributes.put("exception", ex.getClass().getSimpleName());
       attributes.put("message", ex.getMessage());
       attributes.put("status", ex.getStatus().value());

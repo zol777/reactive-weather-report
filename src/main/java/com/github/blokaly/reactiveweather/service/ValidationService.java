@@ -1,6 +1,6 @@
 package com.github.blokaly.reactiveweather.service;
 
-import com.github.blokaly.reactiveweather.exception.GlobalException;
+import com.github.blokaly.reactiveweather.exception.WeatherException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
@@ -16,7 +16,7 @@ public class ValidationService {
 
   public Mono<String> validate(String city) {
     if ( cityNamePattern.matcher(URLDecoder.decode(city, StandardCharsets.UTF_8)).find()) {
-      throw new GlobalException(HttpStatus.BAD_REQUEST, "city name validation failed");
+      throw new WeatherException(HttpStatus.BAD_REQUEST, "city name validation failed");
     }
     return Mono.just(city);
   }
