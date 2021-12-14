@@ -44,7 +44,7 @@ public class RepoService {
     var putReq = PutItemRequest.builder().item(
             Map.of("city", AttributeValue.builder().s(city).build(),
                 "temperature",
-                AttributeValue.builder().s(String.valueOf(weather.getTemperature())).build(),
+                AttributeValue.builder().s(String.valueOf(weather.getTemperatureDegrees())).build(),
                 "windSpeed", AttributeValue.builder().s(String.valueOf(weather.getWindSpeed())).build()
             ))
         .tableName(weatherTable)

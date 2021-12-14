@@ -27,7 +27,11 @@ https://itembase.com/resources/blog/tech/spring-boot-2-best-practices-for-reacti
 
 https://medium.com/@cheron.antoine/reactor-java-1-how-to-create-mono-and-flux-471c505fa158
 
-### How to run
+## Original requirment spec
+
+https://drive.google.com/file/d/10AT6lbKYlUl1KJ3P2B__ziDJghSv2xaY/view
+
+## How to run
 
 1. First, create a new file named `application-local.yml` under the main's resources folder, with your own api keys:
 

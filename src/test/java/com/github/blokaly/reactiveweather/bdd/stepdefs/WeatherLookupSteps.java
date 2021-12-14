@@ -48,7 +48,7 @@ public class WeatherLookupSteps extends CucumberSpringContextConfiguration {
   @Then("^the client received temperature should be ([\\d\\.]+)$")
   public void client_received_temperature(double temp) {
     var weather = lastResponse.expectBody(Weather.class).returnResult().getResponseBody();
-    assertEquals(temp, weather.getTemperature(), 0.001);
+    assertEquals(temp, weather.getTemperatureDegrees(), 0.001);
   }
 
   @Given("^the mock server is reset$")
