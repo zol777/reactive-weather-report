@@ -1,13 +1,13 @@
 package com.github.blokaly.reactiveweather.controller;
 
 import com.github.blokaly.reactiveweather.data.Weather;
-import com.github.blokaly.reactiveweather.service.WeatherRepoService;
-import com.github.blokaly.reactiveweather.service.WebclientService;
-import java.time.Duration;
+import com.github.blokaly.reactiveweather.service.CacheService;
+import com.github.blokaly.reactiveweather.service.QueryService;
+import com.github.blokaly.reactiveweather.service.RepoService;
+import com.github.blokaly.reactiveweather.service.ValidationService;
 import java.util.function.Function;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.ReactiveRedisOperations;
+import org.reactivestreams.Publisher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,36 +17,32 @@ import reactor.util.function.Tuple2;
 @RestController
 @Slf4j
 public class WeatherController {
-  private final ReactiveRedisOperations<String, Weather> weatherOps;
-  private final WeatherRepoService weatherRepoService;
-  private final WebclientService webclientService;
-  @Value("${application.cache.time-to-live}")
-  private int ttl;
+  private final ValidationService validationService;
+  private final CacheService cacheService;
+  private final RepoService repoService;
+  private final QueryService queryService;
 
-  public WeatherController(ReactiveRedisOperations<String, Weather> weatherOps,
-                           WeatherRepoService weatherRepoService,
-                           WebclientService webclientService) {
-    this.weatherOps = weatherOps;
-    this.weatherRepoService = weatherRepoService;
-    this.webclientService = webclientService;
+  public WeatherController(
+      ValidationService validationService,
+      CacheService cacheService,
+      RepoService repoService,
+      QueryService queryService) {
+    this.validationService = validationService;
+    this.cacheService = cacheService;
+    this.repoService = repoService;
+    this.queryService = queryService;
   }
 
   @GetMapping("/weather/{city}")
   public Mono<Weather> lookupWeather(@PathVariable String city) {
-    return validateCity(city)
-        .flatMap(it -> weatherOps.opsForValue().get(it))
-        .doOnNext(it -> log.info("Value from cache: {}", it))
+    return validationService.validate(city)
+        .flatMap(cacheService::retrieveWeather)
         .switchIfEmpty(
-            webclientService.lookupWeather(city)
-                .zipWhen(it -> weatherOps.opsForValue().set(city, it, Duration.ofSeconds(ttl)))
-                .doOnNext(it -> log.info("Saved to cache: {}", it.getT2()))
-                .map(Tuple2::getT1)
-                .zipWhen(it -> weatherRepoService.saveWeather(city, it))
+            queryService.lookupWeather(city)
+                .transform(it -> cacheService.saveWeather(city, it))
+                .zipWhen(it -> repoService.saveWeather(city, it))
                 .map(Tuple2::getT1))
-        .switchIfEmpty(weatherRepoService.retrieveWeather(city));
+        .switchIfEmpty(repoService.retrieveWeather(city));
   }
 
-  private Mono<String> validateCity(String city) {
-    return Mono.just(city);
-  }
 }

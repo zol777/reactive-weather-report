@@ -1,6 +1,5 @@
 package com.github.blokaly.reactiveweather.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.github.blokaly.reactiveweather.data.OpenWeatherReport;
 import com.github.blokaly.reactiveweather.data.Weather;
 import com.github.blokaly.reactiveweather.data.WeatherStackReport;
@@ -13,13 +12,13 @@ import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
-public class WebclientService {
+public class QueryService {
   private final WebClient weatherStackWebClient;
   private final WebClient openWeatherMapWebClient;
   private final String weatherStackKey;
   private final String openWeatherKey;
 
-  public WebclientService(
+  public QueryService(
       @Qualifier("weatherStackWebClient") WebClient weatherStackWebClient,
       @Qualifier("openWeatherMapWebClient") WebClient openWeatherMapWebClient,
       @Value("${weather-stack-access-key}") String weatherStackKey,

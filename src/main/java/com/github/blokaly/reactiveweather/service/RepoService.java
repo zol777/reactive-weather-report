@@ -2,7 +2,6 @@ package com.github.blokaly.reactiveweather.service;
 
 import com.github.blokaly.reactiveweather.data.Weather;
 import java.util.Map;
-import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,19 +16,19 @@ import software.amazon.awssdk.services.dynamodb.model.PutItemResponse;
 
 @Repository
 @Slf4j
-public class WeatherRepoService {
-  private static final Logger LOGGER = LoggerFactory.getLogger(WeatherRepoService.class);
+public class RepoService {
+  private static final Logger LOGGER = LoggerFactory.getLogger(RepoService.class);
   private final DynamoDbAsyncClient dynamoDbAsyncClient;
   private final String weatherTable;
 
-  public WeatherRepoService(DynamoDbAsyncClient dynamoDbAsyncClient,
-                            @Value("${application.dynamo.table}") String weatherTable) {
+  public RepoService(DynamoDbAsyncClient dynamoDbAsyncClient,
+                     @Value("${application.dynamo.table}") String weatherTable) {
     this.dynamoDbAsyncClient = dynamoDbAsyncClient;
     this.weatherTable = weatherTable;
   }
 
   public Mono<Weather> retrieveWeather(String city) {
-    GetItemRequest itemReq =
+    var itemReq =
         GetItemRequest.builder().key(Map.of("city", AttributeValue.builder().s(city).build()))
             .tableName(weatherTable)
             .build();
@@ -41,7 +40,7 @@ public class WeatherRepoService {
   }
 
   public Mono<PutItemResponse> saveWeather(String city, Weather weather) {
-    PutItemRequest putReq = PutItemRequest.builder().item(
+    var putReq = PutItemRequest.builder().item(
             Map.of("city", AttributeValue.builder().s(city).build(),
                 "temperature",
                 AttributeValue.builder().s(String.valueOf(weather.getTemperature())).build(),
