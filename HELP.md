@@ -31,6 +31,15 @@ https://medium.com/@cheron.antoine/reactor-java-1-how-to-create-mono-and-flux-47
 
 https://drive.google.com/file/d/10AT6lbKYlUl1KJ3P2B__ziDJghSv2xaY/view
 
+## Tech used
+
+- Java 11 with SpringBoot WebFlux
+- Maven
+- BDD Cucumber Test with WireMock
+- Reactive Redis
+- Reactive AWS DynamoDb
+- Docker and docker-compose
+
 ## How to run
 
 1. First, create a new file named `application-local.yml` under the main's resources folder, with your own api keys:
