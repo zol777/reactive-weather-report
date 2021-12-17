@@ -14,9 +14,8 @@ spring:
 
   liquibase:
     url: jdbc:postgresql://${database.host}:${database.port}/${database.name}
-    username: ${database.username}
+    user: ${database.username}
     password: ${database.password}
-    change-log: classpath:/db/db.changelog.yaml
 
 database:
   name: weather
