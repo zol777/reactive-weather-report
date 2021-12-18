@@ -27,12 +27,12 @@ public class CacheService {
         .doOnNext(it -> log.info("Value from cache: {}", it));
   }
 
-  public Mono<Boolean> saveWeather(String city, Weather weather) {
-    return weatherOps.opsForValue().set(city, weather, Duration.ofSeconds(ttl))
+  public Mono<Boolean> saveWeather(Weather weather) {
+    return weatherOps.opsForValue().set(weather.getCity(), weather, Duration.ofSeconds(ttl))
         .doOnNext(it -> log.info("Saved to cache: {}", it));
   }
 
-  public Mono<Weather> saveWeather(String city, Mono<Weather> upstream) {
-    return upstream.zipWhen(it -> saveWeather(city, it)).map(Tuple2::getT1);
+  public Mono<Weather> saveWeather(Mono<Weather> upstream) {
+    return upstream.zipWhen(this::saveWeather).map(Tuple2::getT1);
   }
 }

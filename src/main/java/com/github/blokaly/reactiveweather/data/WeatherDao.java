@@ -1,14 +1,43 @@
 package com.github.blokaly.reactiveweather.data;
 
+import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.relational.core.mapping.Table;
 
-@Data
+@Table("weather")
+@Getter
+@Setter
+@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeatherDao {
-    private String city;
-    private double temperature;
-    private double windSpeed;
+  @Id
+  private Long id;
+
+  @Version
+  private Long version;
+
+  @Size(max = 15)
+  @NotBlank
+  private String city;
+
+  private double temperature;
+
+  private double windSpeed;
+
+  @CreatedDate
+  private LocalDateTime createdDate;
+
+  @LastModifiedDate
+  private LocalDateTime lastModifiedDate;
 }

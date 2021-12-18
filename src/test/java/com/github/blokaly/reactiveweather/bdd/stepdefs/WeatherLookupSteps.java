@@ -57,5 +57,12 @@ public class WeatherLookupSteps extends CucumberSpringContextConfiguration {
   }
 
   @Given("^the redis server is flushed$")
-  public void redis_reset() { redisFactory.getReactiveConnection().serverCommands().flushAll().then().subscribe();}
+  public void redis_reset() {
+    redisFactory.getReactiveConnection().serverCommands().flushAll().then().subscribe();
+  }
+
+  @Given("^the weather table is cleared$")
+  public void weather_table_cleared() {
+    repoService.clearWeather().then().subscribe();
+  }
 }

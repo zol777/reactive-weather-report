@@ -1,6 +1,7 @@
 package com.github.blokaly.reactiveweather.bdd.stepdefs;
 
 import com.github.blokaly.reactiveweather.bdd.WireMockInitializer;
+import com.github.blokaly.reactiveweather.service.RepoService;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import io.cucumber.spring.CucumberContextConfiguration;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @ContextConfiguration(initializers = {WireMockInitializer.class})
 @CucumberContextConfiguration
 @Slf4j
-public class CucumberSpringContextConfiguration {
+public abstract class CucumberSpringContextConfiguration {
 
   @Autowired
   protected WebTestClient webTestClient;
@@ -35,4 +36,6 @@ public class CucumberSpringContextConfiguration {
   @Autowired
   protected ReactiveRedisConnectionFactory redisFactory;
 
+  @Autowired
+  protected RepoService repoService;
 }

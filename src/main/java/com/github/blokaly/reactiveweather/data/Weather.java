@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Weather {
-    private double temperatureDegrees;
-    private double windSpeed;
+  private String city;
+  private double temperatureDegrees;
+  private double windSpeed;
 }

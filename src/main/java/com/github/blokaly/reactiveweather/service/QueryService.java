@@ -41,18 +41,18 @@ public class QueryService {
         .exchangeToMono(res -> res.bodyToMono(WeatherStackReport.class))
         .doOnNext(report -> log.info("Weather Stack: {}", report))
         .filter(WeatherStackReport::isSuccess)
-        .map(report -> new Weather(report.getCurrent().getTemperature(), report.getCurrent()
+        .map(report -> new Weather(city, report.getCurrent().getTemperature(), report.getCurrent()
             .getWindSpeed()));
   }
 
   private Mono<Weather> retrieveFromOpenWeather(String city) {
     return openWeatherMapWebClient.get().uri(ub -> ub.path("/weather")
-        .queryParam("appid", openWeatherKey)
-        .queryParam("units", "metric")
-        .queryParam("q", city).build())
+            .queryParam("appid", openWeatherKey)
+            .queryParam("units", "metric")
+            .queryParam("q", city).build())
         .exchangeToMono(res -> res.bodyToMono(OpenWeatherReport.class))
         .doOnNext(report -> log.info("Open Weather: {}", report))
         .filter(OpenWeatherReport::isSuccess)
-        .map(report -> new Weather(report.getMain().getTemp(), report.getWind().getSpeed()));
+        .map(report -> new Weather(city, report.getMain().getTemp(), report.getWind().getSpeed()));
   }
 }
