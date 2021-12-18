@@ -31,3 +31,18 @@ Feature: Lookup weather report
     When the client calls /weather/abc
     Then the client receives status code of 200
     And the client received temperature should be 35.7
+
+  Scenario: Weather report from database
+    Given the mock server is reset
+    And the weatherstack response of /current?access_key=xxx&unit=m&query=abc with:
+      """
+      {"success": false}
+      """
+    And the openweather response of /weather?appid=xxx&units=metric&q=abc with:
+      """
+      {"cod": 500}
+      """
+    And the weather table has the row of city:abc temperature:30.1 and wind speed:1.2
+    When the client calls /weather/abc
+    Then the client receives status code of 200
+    And the client received temperature should be 30.1

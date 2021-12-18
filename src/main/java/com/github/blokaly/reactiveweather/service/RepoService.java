@@ -19,9 +19,13 @@ public class RepoService {
 
   @Transactional
   public Mono<Weather> saveWeather(Mono<Weather> upstream) {
-    return upstream.zipWhen(it -> weatherRepository.save(weatherMapper.toDao(it)))
+    return upstream.zipWhen(it -> weatherRepository.save(weatherMapper.toWeatherDao(it)))
         .doOnError(ex -> log.error("Error saving to datatabse", ex))
         .map(Tuple2::getT1);
+  }
+
+  public Mono<Weather> retrieveWeather(String city) {
+    return weatherRepository.findWeatherDaoByCity(city).map(weatherMapper::toWeather);
   }
 
   public Mono<Void> clearWeather() {

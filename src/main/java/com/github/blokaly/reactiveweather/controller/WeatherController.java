@@ -28,8 +28,8 @@ public class WeatherController {
         .switchIfEmpty(
             queryService.lookupWeather(city)
                 .transform(cacheService::saveWeather)
-                .transform(repoService::saveWeather)
-        );
+                .transform(repoService::saveWeather))
+        .switchIfEmpty(repoService.retrieveWeather(city));
   }
 
 }

@@ -10,6 +10,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 public class WeatherLookupSteps extends CucumberSpringContextConfiguration {
 
@@ -51,6 +52,12 @@ public class WeatherLookupSteps extends CucumberSpringContextConfiguration {
     assertEquals(temp, weather.getTemperatureDegrees(), 0.001);
   }
 
+  @Then("^the client received wind speed should be ([\\d\\.]+)$")
+  public void client_received_wind_spped(double temp) {
+    var weather = lastResponse.expectBody(Weather.class).returnResult().getResponseBody();
+    assertEquals(temp, weather.getWindSpeed(), 0.001);
+  }
+
   @Given("^the mock server is reset$")
   public void mock_server_reset() {
     wireMockServer.resetAll();
@@ -64,5 +71,11 @@ public class WeatherLookupSteps extends CucumberSpringContextConfiguration {
   @Given("^the weather table is cleared$")
   public void weather_table_cleared() {
     repoService.clearWeather().then().subscribe();
+  }
+
+  @Given("^the weather table has the row of city:(\\S+) temperature:([\\d\\.]+) and wind speed:([\\d\\.]+)$")
+  public void populate_weather_table(String city, double temperature, double windSpeed) {
+    repoService.saveWeather(Mono.just(new Weather(city, temperature, windSpeed))).then()
+        .subscribe();
   }
 }
