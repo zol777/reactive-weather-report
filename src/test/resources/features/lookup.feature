@@ -2,6 +2,7 @@ Feature: Lookup weather report
 
   Background:
     Given the redis server is flushed
+    And the weather table is cleared
 
   Scenario: City name validation failed
     When the client calls /weather/abc_
