@@ -21,6 +21,8 @@ import org.springframework.data.relational.core.mapping.Table;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeatherDao {
+  public static final WeatherDao EMPTY = new WeatherDao();
+
   @Id
   private Long id;
 

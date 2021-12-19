@@ -1,6 +1,7 @@
 package com.github.blokaly.reactiveweather.service;
 
 import com.github.blokaly.reactiveweather.data.Weather;
+import com.github.blokaly.reactiveweather.data.WeatherDao;
 import com.github.blokaly.reactiveweather.data.WeatherMapper;
 import com.github.blokaly.reactiveweather.exception.UnexpectedWeatherVersionException;
 import com.github.blokaly.reactiveweather.exception.WeatherNotFoundException;
@@ -21,9 +22,26 @@ public class RepoService {
 
   @Transactional
   public Mono<Weather> saveWeather(Mono<Weather> upstream) {
-    return upstream.zipWhen(it -> weatherRepository.save(weatherMapper.toWeatherDao(it)))
-        .doOnError(ex -> log.error("Error saving to datatabse", ex))
-        .map(Tuple2::getT1);
+    return upstream.zipWhen(it ->
+        weatherRepository.save(weatherMapper.toWeatherDao(it))
+            .doOnError(ex -> log.error("Error saving to datatabse", ex))
+            .doOnSuccess(dao -> log.info("Weather DAO saved"))
+    ).map(Tuple2::getT1);
+  }
+
+  @Transactional
+  public Mono<Weather> upsert(Mono<Weather> upstream) {
+    return upstream.zipWhen(it ->
+        weatherRepository.findWeatherDaoByCity(it.getCity())
+            .doOnError(ex -> log.error("Error lookup database", ex))
+            .defaultIfEmpty(
+                WeatherDao.EMPTY) // need to provide a value, otherwise stream stopped here
+            .map(dao -> dao == WeatherDao.EMPTY ? weatherMapper.toWeatherDao(it) :
+                weatherMapper.update(it, dao))
+            .flatMap(weatherRepository::save)
+            .doOnError(ex -> log.error("Error saving to datatabse", ex))
+            .doOnSuccess(dao -> log.info("Weather DAO saved"))
+    ).map(Tuple2::getT1);
   }
 
   public Mono<Weather> retrieveWeather(String city) {
@@ -32,8 +50,7 @@ public class RepoService {
 
   public Mono<Weather> retrieveWeather(final Long id, final Long version) {
     return weatherRepository.findById(id)
-        .switchIfEmpty(Mono.error(new WeatherNotFoundException(id)))
-        .handle((dao, sink) -> {
+        .switchIfEmpty(Mono.error(new WeatherNotFoundException(id))).handle((dao, sink) -> {
           // Optimistic locking: pre-check
           if (version != null && !version.equals(dao.getVersion())) {
             // The version are different, return an error
@@ -43,6 +60,7 @@ public class RepoService {
           }
         });
   }
+
 
   public Mono<Void> clearWeather() {
     return weatherRepository.deleteAll();
