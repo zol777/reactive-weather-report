@@ -2,6 +2,8 @@ package com.github.blokaly.reactiveweather.service;
 
 import com.github.blokaly.reactiveweather.data.Weather;
 import com.github.blokaly.reactiveweather.data.WeatherMapper;
+import com.github.blokaly.reactiveweather.exception.UnexpectedWeatherVersionException;
+import com.github.blokaly.reactiveweather.exception.WeatherNotFoundException;
 import com.github.blokaly.reactiveweather.repository.WeatherRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,20 @@ public class RepoService {
 
   public Mono<Weather> retrieveWeather(String city) {
     return weatherRepository.findWeatherDaoByCity(city).map(weatherMapper::toWeather);
+  }
+
+  public Mono<Weather> retrieveWeather(final Long id, final Long version) {
+    return weatherRepository.findById(id)
+        .switchIfEmpty(Mono.error(new WeatherNotFoundException(id)))
+        .handle((dao, sink) -> {
+          // Optimistic locking: pre-check
+          if (version != null && !version.equals(dao.getVersion())) {
+            // The version are different, return an error
+            sink.error(new UnexpectedWeatherVersionException(version, dao.getVersion()));
+          } else {
+            sink.next(weatherMapper.toWeather(dao));
+          }
+        });
   }
 
   public Mono<Void> clearWeather() {
