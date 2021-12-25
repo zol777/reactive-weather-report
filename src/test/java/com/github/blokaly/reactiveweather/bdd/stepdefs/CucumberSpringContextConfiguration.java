@@ -1,5 +1,7 @@
 package com.github.blokaly.reactiveweather.bdd.stepdefs;
 
+import com.github.blokaly.reactiveweather.bdd.MysqlInitializer;
+import com.github.blokaly.reactiveweather.bdd.RedisInitializer;
 import com.github.blokaly.reactiveweather.bdd.WireMockInitializer;
 import com.github.blokaly.reactiveweather.service.RepoService;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -18,7 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@ContextConfiguration(initializers = {WireMockInitializer.class})
+@ContextConfiguration(initializers = {MysqlInitializer.class, RedisInitializer.class, WireMockInitializer.class})
 @CucumberContextConfiguration
 @Slf4j
 public abstract class CucumberSpringContextConfiguration {
