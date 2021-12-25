@@ -1,16 +1,17 @@
 package com.github.blokaly.reactiveweather.configuration;
 
+import dev.miku.r2dbc.mysql.MySqlConnectionConfiguration;
+import dev.miku.r2dbc.mysql.MySqlConnectionFactory;
 import io.r2dbc.pool.ConnectionPool;
 import io.r2dbc.pool.ConnectionPoolConfiguration;
-import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
-import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.spi.ConnectionFactory;
-import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
 import org.springframework.lang.NonNull;
+
+import java.time.Duration;
 
 @Configuration
 public class R2dbcConfiguration extends AbstractR2dbcConfiguration {
@@ -36,7 +37,7 @@ public class R2dbcConfiguration extends AbstractR2dbcConfiguration {
   public ConnectionFactory connectionFactory() {
 
     ConnectionFactory connectionFactory =
-        new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder()
+       MySqlConnectionFactory.from(MySqlConnectionConfiguration.builder()
             .host(host)
             .port(port)
             .username(username)
