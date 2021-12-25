@@ -8,7 +8,9 @@ public class RedisInitializer  implements ApplicationContextInitializer<Configur
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-
+        if ( "docker".equalsIgnoreCase(applicationContext.getEnvironment().getProperty("spring.profiles.active"))) {
+            return;
+        }
         TestRedisContainer.getInstance().start();
     }
 }

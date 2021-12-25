@@ -8,7 +8,9 @@ public class MysqlInitializer implements ApplicationContextInitializer<Configura
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-
+        if ( "docker".equalsIgnoreCase(applicationContext.getEnvironment().getProperty("spring.profiles.active"))) {
+            return;
+        }
         String dbName = applicationContext.getEnvironment().getProperty("database.name");
         TestMysqlContainer.getInstance(dbName).start();
     }
