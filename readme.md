@@ -1,7 +1,7 @@
 # Getting Started
 
 This project contain the following branch
-* `main branch` or `redis-with-dynamodb` use dynamodb as persist layer
+* `main` or `redis-with-dynamodb` use dynamodb as persist layer
 * `redis-mysql-testcontainer` use test container as persist layer only available in docker environment
 * `redis-with-postgresql` use postgresql as persist layer
 
